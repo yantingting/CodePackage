@@ -1,0 +1,52 @@
+# 轻松分期周汇总
+# 00 10 * * 5 source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/product_analysis/轻松分期周报.py >> /home/ops/cron_log/轻松分期周报.log 2>&1
+# 30 11 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/product_analysis/轻松分期日报.py >> /home/ops/cron_log/qingsongfenqi_daily_alert.log 2>&1
+
+
+# 30 14 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 -W ignore::DeprecationWarning /home/ops/repos/analysis/product_analysis/creditV4_psi_alert.py >> /home/ops/cron_log/qingsongfenqi_daily_alert.log 2>&1
+# 30 15 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 -W ignore::DeprecationWarning /home/ops/repos/analysis/product_analysis/creditV6_psi_alert.py >> /home/ops/cron_log/qingsongfenqi_daily_alert.log 2>&1
+
+# uku日报
+00 09 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/report/uku日报.py >> /home/ops/cron_log/uku日报.log 2>&1
+05 09 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/report/uku日报junior.py >> /home/ops/cron_log/uku日报junior.log 2>&1
+
+
+# 模型eda
+#10 0-23/12 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_hourly_alert.py  UKU_A_NEWMODELV4_24H False >> /home/ops/cron_log/UKU_A_NEWMODELV4_24H.log 2>&1
+00 0-23/12 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_hourly_alert.py  UKU_A_NEWMODELV5_24H False >> /home/ops/cron_log/UKU_A_NEWMODELV5_24H.log 2>&1
+#10 0-23/12 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_hourly_alert.py  UKU_A_NEWMODELV5_cashcash_24H False >> /home/ops/cron_log/UKU_A_NEWMODELV5_cashcash_24H .log 2>&1
+02 0-23/12 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_hourly_alert.py  UKU_A_IOSNEWMODELV1_24H False >> /home/ops/cron_log/UKU_A_IOSNEWMODELV1_24H.log 2>&1
+04 0-23/12 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_hourly_alert.py  UKU_A_OLDMODELV2_24H False >> /home/ops/cron_log/UKU_A_OLDMODELV2_24H.log 2>&1
+#04 0-23/12 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_hourly_alert.py  UKU_A_OLDMODELV2_ONEKEYLOAN_24H False >> /home/ops/cron_log/UKU_A_OLDMODELV2_ONEKEYLOAN_24H.log 2>&1
+#06 0-23/12 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_hourly_alert.py  UKU_A_OLDMODELV2_MODIFY_24H False >> /home/ops/cron_log/UKU_A_OLDMODELV2_MODIFY_24H.log 2>&1
+08 0-23/12 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_hourly_alert.py  UKU_A_NEWMODELV6_UKU_24H False >> /home/ops/cron_log/UKU_A_NEWMODELV6_UKU_24H.log 2>&1
+08 0-23/12 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_hourly_alert.py  UKU_A_OLDMODELV3_24H False >> /home/ops/cron_log/UKU_A_OLDMODELV3_24H.log 2>&1
+
+
+# 模型日报
+00 07 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_daily_report.py UKU_A_IOSNEWMODELV1 False >> /home/ops/cron_log/UKU_A_IOSNEWMODELV1_S1D.log 2>&1
+05 07 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_daily_report.py UKU_A_LINKAGA_NEWMODELV1 False >> /home/ops/cron_log/UKU_A_LINKAGA_NEWMODELV1_S1D.log 2>&1
+10 07 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_daily_report.py UKU_A_NEWMODELV5 False >> /home/ops/cron_log/UKU_A_NEWMODELV5.log 2>&1
+15 07 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_daily_report.py UKU_A_NEWMODELV5_LOAN False >> /home/ops/cron_log/UKU_A_NEWMODELV5_LOAN.log 2>&1
+20 07 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_daily_report.py UKU_A_OLDMODELV2 False >> /home/ops/cron_log/UKU_A_OLDMODELV2.log 2>&1
+25 07 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_daily_report.py UKU_A_NEWMODELV6 False >> /home/ops/cron_log/UKU_A_NEWMODELV6_S1D.log 2>&1
+30 07 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_daily_report.py UKU_A_OLDMODELV3 False >> /home/ops/cron_log/UKU_A_OLDMODELV3.log 2>&1
+#10 08 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_daily_report.py CASHCASH_A_NEWMODELV5 False >> /home/ops/cron_log/CASHCASH_A_NEWMODELV5.log 2>&1
+#10 08 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_daily_report.py CASHCASH_A_NEWMODELV5_LOAN False >> /home/ops/cron_log/CASHCASH_A_NEWMODELV5_LOAN.log 2>&1
+#16 08 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_daily_report.py UKU_A_OLDMODELV2_MODIFY False >> /home/ops/cron_log/UKU_A_OLDMODELV2_MODIFY.log 2>&1
+#18 08 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_daily_report.py UKU_A_OLDMODELV2_ONEKEYLOAN False >> /home/ops/cron_log/UKU_A_OLDMODELV2_ONEKEYLOAN.log 2>&1
+
+# 模型周报
+00 08 * * 5 source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_weekly_report.py UKU_A_IOSNEWMODELV1 False >> /home/ops/cron_log/UKU_A_IOSNEWMODELV1_S1D.log 2>&1
+05 08 * * 5 source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_weekly_report.py UKU_A_LINKAGA_NEWMODELV1 False >> /home/ops/cron_log/UKU_A_LINKAGA_NEWMODELV1_S1D.log 2>&1
+10 08 * * 5 source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_weekly_report.py  UKU_A_NEWMODELV5 False >> /home/ops/cron_log/UKU_A_NEWMODELV5_WEEK.log  2>&1
+15 08 * * 5 source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_weekly_report.py  UKU_A_OLDMODELV2 False >> /home/ops/cron_log/UKU_A_OLDMODELV2.log  2>&1
+20 08 * * 5 source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_weekly_report.py  UKU_A_NEWMODELV6 False >> /home/ops/cron_log/UKU_A_NEWMODELV6_WEEK.log  2>&1
+25 08 * * 5 source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_weekly_report.py  UKU_A_OLDMODELV3 False >> /home/ops/cron_log/UKU_A_OLDMODELV3.log  2>&1
+#04 08 * * 5 source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_weekly_report.py  UKU_A_OLDMODELV2_MODIFY False >> /home/ops/cron_log/UKU_A_OLDMODELV2_MODIFY.log  2>&1
+#06 08 * * 5 source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/alert/execution/call_weekly_report.py  UKU_A_OLDMODELV2_ONEKEYLOAN False >> /home/ops/cron_log/UKU_A_OLDMODELV2_ONEKEYLOAN.log  2>&1
+
+# 全流程转化建表
+40 09 * * * source /home/ops/.bashrc; /usr/local/bin/python3.6 /home/ops/repos/analysis/cron/report/全流程转化建表daily.py >> /home/ops/cron_log/全流程转化建表daily.log 2>&1
+
+

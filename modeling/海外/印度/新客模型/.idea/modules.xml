@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../../../newgenie/.idea/newgenie.iml" filepath="$PROJECT_DIR$/../../../../newgenie/.idea/newgenie.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../印尼/三方数据测试/.idea/三方数据测试.iml" filepath="$PROJECT_DIR$/../../印尼/三方数据测试/.idea/三方数据测试.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../印尼/召回项目/.idea/召回项目.iml" filepath="$PROJECT_DIR$/../../印尼/召回项目/.idea/召回项目.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/新客模型.iml" filepath="$PROJECT_DIR$/.idea/新客模型.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../印尼/日常分析/.idea/日常分析.iml" filepath="$PROJECT_DIR$/../../印尼/日常分析/.idea/日常分析.iml" />
+    </modules>
+  </component>
+</project>

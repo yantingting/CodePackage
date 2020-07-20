@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../../../newgenie/.idea/newgenie.iml" filepath="$PROJECT_DIR$/../../../../newgenie/.idea/newgenie.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../召回项目/.idea/召回项目.iml" filepath="$PROJECT_DIR$/../召回项目/.idea/召回项目.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/日常分析.iml" filepath="$PROJECT_DIR$/.idea/日常分析.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../重启/.idea/重启.iml" filepath="$PROJECT_DIR$/../重启/.idea/重启.iml" />
+    </modules>
+  </component>
+</project>

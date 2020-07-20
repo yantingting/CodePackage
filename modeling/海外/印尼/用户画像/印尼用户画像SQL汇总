@@ -1,0 +1,458 @@
+
+1、创建主键表
+create table temp_key_hx as select *
+from ( select id,customer_id,apply_time,
+date(apply_time) as apply_date,
+row_number()over(partition by customer_id order by apply_time asc) as apply_rank 
+from dw_gocash_go_cash_loan_gocash_core_loan )t
+where apply_rank = 1;
+
+2、基本信息
+create table temp_baseinfo_hx as select * 
+from (with apply as 
+(
+select * from temp_key_hx
+),
+baseinfo as 
+(
+SELECT customer_id
+    , update_time
+    , cell_phone
+    , mail
+    , id_card_no
+    , id_card_address
+    , marital_status
+    , religion
+    ,education
+    ,channel
+    ,device
+    , substring(id_card_no, 1,2) as provincecode
+    , substring(id_card_no, 3,2) as citycode
+    , substring(id_card_no, 5,2) as districtcode
+    , case when substring(id_card_no, 7,2)::int > 40 then 'female' else 'male' end as gender --female生日 = 1-31 + 40; male生日=1-31
+    , case when substring(id_card_no, 11,2)::int >substring(cast(update_time as varchar),3,2)::int 
+        then 100 +substring(cast(update_time as varchar),3,2)::int - substring(id_card_no, 11,2)::int
+        else substring(cast(update_time as varchar),3,2)::int - substring(id_card_no, 11,2)::int  end as age
+FROM dw_gocash_go_cash_loan_gocash_core_customer_history )
+select * from 
+(select apply.id as apply_id,
+apply.apply_time as apply_time,
+apply.apply_date as apply_date,
+baseinfo.*,
+row_number()over(partition by apply.customer_id order by baseinfo.update_time desc) as rn
+from apply 
+left join baseinfo on apply.customer_id = baseinfo.customer_id
+where apply.apply_time >=baseinfo.update_time
+)t
+where rn = 1) a;
+
+3、职业信息
+create table temp_jobinfo_hx as select * 
+from (with apply as 
+(
+select * from temp_key_hx
+),
+jobinfo as 
+(
+SELECT customer_id
+    , update_time
+    , occupation_type
+    , job
+    , industry_involved
+    , monthly_salary
+    , company_area
+    , employee_number
+    , jobless_time_income
+    , monthly_income_resource
+    , pre_work_industry
+    , pre_work_income
+FROM dw_gocash_go_cash_loan_gocash_core_cusomer_profession
+UNION
+SELECT customer_id
+    , update_time
+    , occupation_type
+    , job
+    , industry_involved
+    , monthly_salary
+    , company_area
+    , employee_number
+    , jobless_time_income
+    , monthly_income_resource
+    , pre_work_industry
+    , pre_work_income
+FROM dw_gocash_go_cash_loan_gocash_core_cusomer_profession_history 
+)
+select * from 
+(select apply.id as apply_id,
+apply.apply_time as apply_time,
+apply.apply_date as apply_date,
+jobinfo.*,
+row_number()over(partition by apply.customer_id order by jobinfo.update_time desc) as rn
+from apply 
+left join jobinfo on apply.customer_id = jobinfo.customer_id
+where apply.apply_time >=jobinfo.update_time
+)t
+where rn = 1) a;
+
+
+4、银行卡信息
+create table temp_bankinfo_hx as select * 
+from (with apply as 
+(
+select * from temp_key_hx
+),
+bankinfo as 
+(
+SELECT customer_id
+    , create_time as update_time
+    , bank_code
+FROM dw_gocash_go_cash_loan_gocash_core_customer_account
+UNION
+SELECT customer_id
+    , update_time
+    , bank_code
+FROM dw_gocash_go_cash_loan_gocash_core_customer_account_history 
+)
+select * from 
+(select apply.id as apply_id,
+apply.apply_time as apply_time,
+apply.apply_date as apply_date,
+bankinfo.*,
+row_number()over(partition by apply.customer_id order by bankinfo.update_time desc) as rn
+from apply 
+left join bankinfo on apply.customer_id = bankinfo.customer_id
+where apply.apply_time >=bankinfo.update_time
+)t
+where rn = 1) a;
+
+5、紧联信息（风险：一个人填紧联在不同天）
+create table temp_referinfo_hx as select * 
+from (with apply as 
+(
+select * from temp_key_hx
+),
+referinfo as 
+(
+SELECT customer_id
+    , create_time
+    , count(distinct refer_phone) as cnt_refer 
+    , count(distinct refer_type) as cnt_refertype
+    , count(distinct case when refer_type = 'BROTHERS_AND_SISTERS' then refer_phone else null end) as cnt_bro_sis
+    , count(distinct case when refer_type = 'SELF' then refer_phone else null end) as cnt_self
+    , count(distinct case when refer_type = 'SPOUSE' then refer_phone else null end) as cnt_spouse
+    , count(distinct case when refer_type = 'FRIEND' then refer_phone else null end) as cnt_friend
+    , count(distinct case when refer_type = 'KINSFOLK' then refer_phone else null end) as cnt_kinsfolk
+    , count(distinct case when refer_type = 'PARENTS' then refer_phone else null end) as cnt_parents
+FROM dw_gocash_go_cash_loan_gocash_core_customer_refer 
+group by customer_id , create_time
+)
+select * from 
+(select apply.id as apply_id,
+apply.apply_time as apply_time,
+apply.apply_date as apply_date,
+referinfo.*,
+row_number()over(partition by apply.customer_id  order by referinfo.create_time desc) as rn
+from apply 
+left join referinfo on apply.customer_id = referinfo.customer_id
+where apply.apply_time >=referinfo.create_time
+)t
+where rn = 1) a;
+
+
+6、设备信息（有语法错误：json有异常，保存的原始数据，因为1/2之后设备信息更改，导致有里边有些数据外边多了引号）
+create table temp_deviceinfo_hx as select * 
+from (with apply as 
+(
+select * from temp_key_hx
+),
+deviceinfo as 
+(
+SELECT customer_id::bigint as customer_id
+    , create_time
+    , device_info::json ->> 'brand' as brand
+    , device_info::json ->> 'heightPixels'  as heightPixels
+    , device_info::json ->> 'widthPixels'  as widthPixels
+    , device_info::json ->> 'manufacturer'  as manufacturer
+    , device_info::json ->> 'Model'::varchar  as model
+    , device_info::json ->> 'version'  as version
+FROM (select customer_id,create_time,
+case when substring(device_info,1,1)='"' then substring(device_info,2,length(device_info)-2) else device_info end as device_info
+from gocash_loan_risk_program_baseinfo
+WHERE device_info<>'')b
+)
+select * from 
+(select apply.id as apply_id,
+apply.apply_time as apply_time,
+apply.apply_date as apply_date,
+deviceinfo.*,
+row_number()over(partition by apply.customer_id order by deviceinfo.create_time desc) as rn
+from apply 
+left join deviceinfo on apply.customer_id = deviceinfo.customer_id
+where apply.apply_time >=deviceinfo.create_time
+)t
+where rn = 1) a;
+
+7、GPS信息
+create table temp_gpsinfo_hx as select * 
+from (with apply as 
+(
+select * from temp_key_hx
+),
+gpsinfo as 
+(
+select customer_id, 
+	   create_time, 
+	   jailbreak_status,
+	   simulator_status, 
+	   gps::json ->>  'latitude' as latitude, 
+	   gps::json ->>  'longitude' as longitude, 
+	   gps::json ->>  'direction' as direction,  
+	   gps::json ->>  'speed' as speed, 
+	   gps::json ->>  'altitude' as altitude,
+	   gps::json ->>  'accuracy' as accuracy
+	from gocash_loan_risk_program_baseinfo 
+WHERE gps<>''
+)
+select * from 
+(select apply.id as apply_id,
+apply.apply_time as apply_time,
+apply.apply_date as apply_date,
+gpsinfo.*,
+row_number()over(partition by apply.customer_id order by gpsinfo.create_time desc) as rn
+from apply 
+left join gpsinfo on apply.customer_id::varchar = gpsinfo.customer_id
+where apply.apply_time >=gpsinfo.create_time
+)t
+where rn = 1) a;
+
+8、注册时间
+create table temp_regtime_hx as 
+select customer_id ,min(create_time) as reg_time
+from (select id as customer_id,
+create_time
+from dw_gocash_go_cash_loan_gocash_core_customer
+union 
+select customer_id,
+create_time
+from dw_gocash_go_cash_loan_gocash_core_customer_history)t 
+group by customer_id;
+
+9、平均复贷次数（按天看）
+select t1.effective_date,
+count(distinct t1.customer_id) as cnt_cus,
+count(1) as times 
+from 
+(select customer_id,
+return_flag,
+effective_date
+from dw_gocash_go_cash_loan_gocash_core_loan 
+where effective_date is not null
+and effective_date::date >= '2019-01-01'
+and effective_date::date <= '2019-12-20'
+and return_flag = 'false') t1 
+left join
+(select loan_no,
+customer_id,
+return_flag,
+effective_date
+from dw_gocash_go_cash_loan_gocash_core_loan 
+where effective_date is not null
+and effective_date::date >= '2019-01-01') t2 
+on t1.customer_id = t2.customer_id
+group by t1.effective_date
+
+10、平均放款时间间隔(按天看)
+select vin_effective_date,
+count(1) as cnt_loan,
+sum(diff_days) as sum_days
+from
+(
+select t1.loan_no,
+t1.effective_date as vin_effective_date,
+t2.effective_date as sec_effective_date,
+t2.effective_date - t1.effective_date as diff_days,
+row_number()over(partition by t1.loan_no order by t2.effective_date asc ) as rank_loan
+from 
+(select loan_no,
+customer_id,
+effective_date
+from dw_gocash_go_cash_loan_gocash_core_loan 
+where effective_date is not null
+and effective_date::date >= '2019-01-01'
+and effective_date::date <= '2019-12-20') t1 
+left join
+(select loan_no,
+customer_id,
+effective_date
+from dw_gocash_go_cash_loan_gocash_core_loan 
+where effective_date is not null
+and effective_date::date >= '2019-01-01') t2 
+on t1.customer_id = t2.customer_id
+where t1.effective_date < t2.effective_date) t
+where rank_loan = 1
+group by vin_effective_date
+
+11、APP信息 
+create table temp_packageinfo_hx as select * 
+from (with apply as 
+(
+select * from temp_key_hx
+),
+packageinfo as 
+(
+select customer_id, 
+	   create_time, 
+	   packages
+	from gocash_loan_risk_program_packages 
+WHERE packages<>''
+)
+select * from 
+(select apply.id as apply_id,
+apply.apply_time as apply_time,
+apply.apply_date as apply_date,
+packageinfo.*,
+row_number()over(partition by apply.customer_id order by packageinfo.create_time desc) as rn
+from apply 
+left join packageinfo on apply.customer_id::varchar = packageinfo.customer_id
+where apply.apply_time >=packageinfo.create_time
+)t
+where rn = 1) a;
+
+12、是否是盈利客户（第一次放款80天之内放款的订单是否能给我带来收益）
+select t1.customer_id as customer_id,
+sum(case when t2.effective_date - t1.first_effective_date<=80 
+then t2.extend_fee+t2.late_fee+t2.principal_repay-t2.approved_amount else 0 end) as profit
+from 
+(select customer_id, min(effective_date) as first_effective_date
+from dw_gocash_go_cash_loan_gocash_core_loan
+where effective_date is not null
+and effective_date::date >= '2019-01-01'
+group by customer_id)t1
+left join 
+(select a1.id as loan_id,
+a1.customer_id as customer_id,
+a1.effective_date,
+a1.approved_principal,
+a1.approved_amount,
+case when a2.extend_fee is not null then a2.extend_fee else 0 end as extend_fee,
+case when a2.late_fee is not null then a2.late_fee else 0 end as late_fee,
+case when a2.principal is not null then a2.principal else 0 end as principal_repay
+from 
+(select * from dw_gocash_go_cash_loan_gocash_core_loan
+where effective_date is not null
+and effective_date::date >= '2019-01-01') a1 
+left join 
+(select loan_id,
+sum(case when extend_fee is not null then extend_fee else 0 end)  as extend_fee,
+sum(case when late_fee is not null then late_fee else 0 end)  as late_fee,
+sum(case when principal is not null then principal else 0 end)  as principal
+from dw_gocash_go_cash_loan_gocash_core_loan_pay_flow
+where status = 'SUCCESS'
+group by loan_id)a2 
+on a1.id = a2.loan_id) t2 
+on t1.customer_id = t2.customer_id
+group by t1.customer_id;
+
+
+13、入催出催
+select
+	u.customer_id as customer_id,
+	u.total_order,
+	u.total_loan,
+	u.rucui_loan,
+	u.rucui_order,
+	v.chucui_loan,
+	v.chucui_order,
+	v.chucui_days,
+	v.max_chucui_days
+from
+	(
+	select
+		a.customer_id as customer_id,
+		count(*) as total_order,
+		count(distinct a.id) as total_loan,
+		count(distinct case when b.order_status is not null and b.order_status <> 'PAIDOFF' then a.id else null end) as rucui_loan,
+		count(distinct case when b.order_status is not null and b.order_status <> 'PAIDOFF' then b.id else null end) as rucui_order
+	from
+		(
+		select
+			id,
+			customer_id,
+			approved_principal,
+			approved_period,
+			effective_date,
+			return_flag
+		from
+			public.dw_gocash_go_cash_loan_gocash_core_loan
+		where
+			effective_date >= '2019-01-01'
+			and effective_date <= '2019-12-31'
+			and loan_status not in ('DENIED',
+			'RESCIND',
+			'APPROVING',
+			'CREATED'))a
+	left join (
+		select
+			id,
+			order_id,
+			order_status,
+			late_day,
+			row_number() over(partition by order_id
+		order by
+			create_time) as rk
+		from
+			public.dw_gocash_gocash_collection_col_case)b on
+		a.id = b.order_id
+	group by
+		a.customer_id)u
+left join (
+	select
+		a.customer_id as customer_id,
+		max(late_days) as max_chucui_days,
+		sum(late_days) as chucui_days,
+		count(distinct case when late_fee>0 then a.id else null end) as chucui_loan,
+		count(distinct case when late_fee>0 then b.id else null end) as chucui_order
+	from
+		(
+		select
+			id,
+			customer_id,
+			approved_principal,
+			approved_period,
+			effective_date,
+			return_flag
+		from
+			public.dw_gocash_go_cash_loan_gocash_core_loan
+		where
+			effective_date >= '2019-01-01'
+			and effective_date <= '2019-12-31'
+			and loan_status not in ('DENIED',
+			'RESCIND',
+			'APPROVING',
+			'CREATED'))a
+	left join (
+		select
+			id,
+			loan_id,
+			late_days,
+			late_fee,
+			row_number() over(partition by loan_id
+		order by
+			create_time) as rk
+		from
+			public.dw_gocash_go_cash_loan_gocash_core_loan_pay_flow
+		where
+			status = 'SUCCESS'
+			and late_fee>0)b on
+		a.id = b.loan_id
+	group by
+		a.customer_id) v 
+		on	v.customer_id = u.customer_id;
+	group by
+		a.customer_id) v 
+		on	v.customer_id = u.customer_id;
+		
+
+
+
+
