@@ -104,14 +104,13 @@ def get_feature_info_from_bins(bins, list_feature, list_info=['variable', 'total
     return df_total_col[list_col].drop_duplicates().reset_index()
 
 
-def drop_columns(df, list_col_to_drop):
+def drop_columns(df, drop_list):
     exist_col = []
-    for col in list_col_to_drop:
+    for col in drop_list:
         if col in df.columns:
             exist_col.append(col)
     exist_col = list(set(exist_col))
-    print('删除前总列数：{}, 需要删除列数：{}, 被删除列数：{}, 删除后总列数：{}'.format(len(df.columns), len(list_col_to_drop), len(exist_col),
-                                                             len(df.columns) - len(exist_col)))
+    print('删除前总列数：{}, 被删除列数：{}, 删除后总列数：{}'.format(len(df.columns), len(exist_col),len(df.columns) - len(exist_col)))
     return df.drop(exist_col, axis=1)
 
 
@@ -183,8 +182,6 @@ def calc_psi(col_list, df_train, df_test):
             df_var['test_var_per'] / df_var['train_var_per']))
         var_psi = df_var['psi'].mean()
         psi_list.append(var_psi)
-
-    #         print('{}:\tPSI={}'.format(var, var_psi))
 
     df_psi = pd.DataFrame({'var': col_list, 'psi': psi_list})
     return df_psi
