@@ -1,14 +1,8 @@
 ## 概况
 
-* utils: 常用方法函数包, 支持Python2
 * utils3: 常用方法函数包, 支持Python3
 * doc: documentation相关的文件
-* requirements.txt: 使用见[安装和使用], 包含所有Python2所需包以及版本
-* requirements3.txt: 使用见[安装和使用], 包含所有Python3所需包以及版本
-
-
-## 使用样例
-请见 `utils` 和 `utils3` 中的demo文件。
+* requirements.txt: 使用见[安装和使用], 包含所有Python3所需包以及版本
 
 
 ## 文件夹命名和代码规范
@@ -71,8 +65,6 @@ step3: 建好本地代码文件夹，在该文件夹路径下，将建好的库c
 
 step4: 建议下载github Desktop(https://desktop.github.com/), 便于进行代码的管理
 
-
-
 ```
 
 * 建议安装virtual environment
@@ -105,9 +97,6 @@ Linux 系统是~/.bashrc, Mac OS系统是 ~/.bash_profile, 在这个文件里面
 `source ~/.bash_profile`
 之后既可以正常import这个包里面的函数了
 
-使用Python2时可以参照：
-```
-from utils.data_io_utils import *
 ```
 
 使用Python3时可以参照：
