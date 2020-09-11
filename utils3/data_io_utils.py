@@ -33,11 +33,11 @@ def print_run_time(func):
 class DataBase():
     def __init__(self):
         self.cf = {
-            "database": "risk_dm",
-            "user": "postgres",
-            "password": "Mintq2019",
-            "host": "192.168.2.20",
-            "port": "5432"
+            "database": "rim",
+            "user": "po",
+            "password": "M2019",
+            "host": "192.2.20",
+            "port": "54"
         }
     @print_run_time
     def get_df_from_pg(self, SQL):
