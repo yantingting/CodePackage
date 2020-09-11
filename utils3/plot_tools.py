@@ -22,7 +22,7 @@ from matplotlib.pylab import rcParams
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 rcParams['figure.figsize'] = 16,8
-plt.switch_backend('agg')
+
 
 
 def cal_rate(df, resp, lenth):
