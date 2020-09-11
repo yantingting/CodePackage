@@ -20,6 +20,9 @@ if not os.path.exists(result_path):
     os.makedirs(result_path)
 
 
+
+
+
 df = pd.read_excel(os.path.join(data_path, 'sample_data.xlsx'))
 print(df.shape)
 df.head()

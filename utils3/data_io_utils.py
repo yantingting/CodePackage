@@ -36,8 +36,8 @@ class DataBase():
             "database": "rim",
             "user": "po",
             "password": "M2019",
-            "host": "192.2.20",
-            "port": "54"
+            "host": "1.2.20",
+            "port": "4"
         }
     @print_run_time
     def get_df_from_pg(self, SQL):
@@ -82,8 +82,9 @@ class DataBase():
 
 
 
+
 @print_run_time
-def create_dict(df, data_sorce=None, data_type=None,useless_vars = []):
+def create_dict(df, is_available = 'Y', data_sorce=None, data_type=None, useless_vars = []):
     '''
     :param data_sorce:
     :param data_type:
@@ -95,7 +96,7 @@ def create_dict(df, data_sorce=None, data_type=None,useless_vars = []):
         X_col = list(set(df.columns.tolist()))
 
     X = df[X_col].copy()
-    var_dict = pd.DataFrame(columns=['数据源', '指标英文', '指标中文', '数据类型', '指标类型'])
+    var_dict = pd.DataFrame(columns=['数据源', '指标英文', '指标中文', '数据类型', '指标类型', '是否可用'])
     var_dict['指标英文'] = X.dtypes.index
     var_dict['指标中文'] = X.dtypes.index
     var_dict['数据类型'] = X.dtypes.values
@@ -103,6 +104,7 @@ def create_dict(df, data_sorce=None, data_type=None,useless_vars = []):
         lambda x: 'varchar' if x == 'object' else 'float' if x == 'float64' else 'int')
     var_dict['数据源'] = data_sorce
     var_dict['指标类型'] = data_type
+    var_dict['是否可用'] = is_available
     return var_dict
 
 

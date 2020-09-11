@@ -25,8 +25,7 @@ def eda(X, var_dict, useless_vars, exempt_vars, uniqvalue_cutoff=0.97):
     Args:
 
     X (pd.DataFrame()): 是一个宽表，每一列是一个变量，每一行是一个obs
-    var_dict (pd.DataFrame()): 标准变量字典表，包含以下这些列：数据源，数据类型，指标类型，
-    指标英文，指标中文，变量解释，取值解释。
+    var_dict (pd.DataFrame()): 标准变量字典表，包含以下这些列：'数据源', '指标英文', '指标中文', '数据类型', '指标类型', '是否可用'
     useless_vars (list): 无用变量名list
     exempt_vars (list): 豁免变量名list，这些变量即使一开始被既定原因定为exclude，也会被
         保留，比如前一版本模型的变量
@@ -183,7 +182,7 @@ def eda(X, var_dict, useless_vars, exempt_vars, uniqvalue_cutoff=0.97):
                                               'N_categories': '类别数量'})
 
     # read var_code explanation
-    final_output = var_dict.loc[:, ['数据源', '指标英文', '指标中文', '数据类型', '指标类型']]\
+    final_output = var_dict.loc[:, ['数据源', '指标英文', '指标中文', '数据类型', '指标类型', '是否可用']]\
                     .merge(final_output, left_on='指标英文', right_on='var_code')\
                     .drop('var_code', 1)
 
