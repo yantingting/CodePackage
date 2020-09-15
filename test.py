@@ -169,3 +169,5 @@ df = pd.read_excel(os.path.join(data_path, 'sample_data.xlsx'))
 df.head()
 
 
+import numpy as np
+eda(df, useless_vars = ['company_name_md5'], special_value = [np.nan], var_dict = None, result_path = None, save_label = None, cutoff=0.97)
