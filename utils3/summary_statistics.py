@@ -122,9 +122,8 @@ def eda(X, useless_vars = [], special_value = [], var_dict = None, result_path =
     all_vars_summary.loc[useless_vars, 'exclusion_reason'] = '无用变量'
 
     final_output = all_vars_summary.reset_index().rename(columns = {'index': '指标英文'})
-
-    if var_dict:
-        final_output = var_dict.merge(final_output, on = '指标英文')
+    if var_dict.values.any():
+        final_output = pd.merge(var_dict, final_output, on = '指标英文')
     try:
         final_output.to_excel(os.path.join(result_path, '%s_EDA.xlsx' % save_label), encoding='utf-8', index=False)
     except:

@@ -15,7 +15,7 @@ import pickle as pickle
 import simplejson as json
 import pandas as pd
 import numpy as np
-import psycopg2
+# import psycopg2
 import itertools
 from sqlalchemy import create_engine
 import time
@@ -108,7 +108,7 @@ class DataCombine():
         var_dict['指标中文'] = X.dtypes.index
         var_dict['数据类型'] = X.dtypes.values
         var_dict['数据类型'] = var_dict['数据类型'].apply(
-            lambda x: 'varchar' if x == 'object' else 'float' if x.find('float')>-1 else 'int')
+            lambda x: 'varchar' if x == 'object' else 'float' if x == 'float64' else 'int')
         var_dict['数据源'] = data_sorce
         var_dict['指标类型'] = data_type
         var_dict['是否可用'] = is_available
