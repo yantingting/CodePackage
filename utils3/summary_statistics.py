@@ -1,74 +1,53 @@
-# encoding=utf8
-"""
-对数据进行Exploratory data analysis和极值处理
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
 
-Owner： 胡湘雨
-
-最近更新：2017-12-07
 """
-#import os
+@File    : summary_statistics.py
+@Time    : 2020-09-11 23:15
+@Author  : yantingting
+@Email   : yanxt123456@163.com
+@Software: PyCharm
+"""
+
+import os
 import pandas as pd
 import numpy as np
-#from utils3.misc_utils import *
-#from jinja2 import Template
 
-#try:
-#    import xgboost as xgb
-#except:
-#    pass
-
-
-def eda(X, var_dict, useless_vars, exempt_vars, uniqvalue_cutoff=0.97):
+def eda(X, useless_vars = [], special_value = [], var_dict = None, result_path = None, save_label = None, cutoff=0.97):
     """
-    计算N, missing value percent, mean, min, max, percentiles 等。
-
-    Args:
-
-    X (pd.DataFrame()): 是一个宽表，每一列是一个变量，每一行是一个obs
-    var_dict (pd.DataFrame()): 标准变量字典表，包含以下这些列：'数据源', '指标英文', '指标中文', '数据类型', '指标类型', '是否可用'
-    useless_vars (list): 无用变量名list
-    exempt_vars (list): 豁免变量名list，这些变量即使一开始被既定原因定为exclude，也会被
-        保留，比如前一版本模型的变量
-    data_path (str): 存储数据文件路径
-    save_label (str): summary文档存储将用'%s_variables_summary.xlsx' % save_label存
-    uniqvalue_cutoff（float): 0-1之间，缺失率和唯一值阈值设定
-
-    Returns：
-    None
-    直接将结果存成xlsx
+    :param X: DataFrame,数据集
+    :param useless_vars: 不需要分析的列
+    :param special_value: 需单独统计的数值或者类型
+    :param var_dict: 数据字典，默认为None，如果有 包含['数据源', '指标英文', '指标中文', '数据类型', '指标类型', '是否可用']
+    :param result_path: 文件存储位置，默认为None
+    :param save_label: 文件名，格式为'%s_EDA.xlsx' % save_label
+    :param cutoff:  判断异常的阈值
+    :return: DataFrame  EDA
     """
-    variable_summary = X.count(0).to_frame('N_available')
-    variable_summary.loc[:, 'N'] = len(X)
-    variable_summary.loc[:, 'N_-9999'] = (X.isin([-9999, '-9999', '-9999.0'])).sum()
-    variable_summary.loc[:, 'pct_-9999'] = np.round(variable_summary['N_-9999'] * 1.0 / variable_summary.N, 3)
-    variable_summary.loc[:, 'N_-8888'] = (X.isin([-8888, '-8888', '-8888.0'])).sum()
-    variable_summary.loc[:, 'pct_-8888'] = np.round(variable_summary['N_-8888'] * 1.0 / variable_summary.N, 3)
-    variable_summary.loc[:, 'N_-8887'] = (X.isin([-8887, '-8887', '-8887.0'])).sum()
-    variable_summary.loc[:, 'pct_-8887'] = np.round(variable_summary['N_-8887'] * 1.0 / variable_summary.N, 3)
-    variable_summary.loc[:, 'N_-1'] = (X.isin([-1, '-1', '-1.0'])).sum()
-    variable_summary.loc[:, 'pct_-1'] = np.round(variable_summary['N_-1'] * 1.0 / variable_summary.N, 3)
-    variable_summary.loc[:, 'pct_NA'] = variable_summary['pct_-8888'] \
-                                        + variable_summary['pct_-8887'] \
-                                        + variable_summary['pct_-9999'] \
-                                        + variable_summary['pct_-1']
-    variable_summary.loc[:, 'N_0'] = (X.isin([0,'0'])).sum()
-    variable_summary.loc[:, 'pct_0'] = np.round(variable_summary.N_0 * 1.0 / variable_summary.N, 3)
-    # the following can only be done for continuous variable
+    variable_summary = X.count().to_frame('N_available')
+    variable_summary.loc[:, 'N'] = X.shape[0]
+    if special_value:
+        for values in special_value:
+            if values != '':
+                variable_summary.loc[:, 'N_%s' % values] = (X.isin([values])).sum()
+                variable_summary.loc[:, 'pct_%s' % values] = np.round(variable_summary['N_%s' % values] * 1.0 / variable_summary.N, 3)
+            else:
+                variable_summary.loc[:, 'N_NA'] = (X.isna()).sum()
+                variable_summary.loc[:, 'pct_NA'] = np.round(variable_summary['N_NA'] * 1.0 / variable_summary.N, 3)
+    # 如果有字典就按照字典中的类型来，如果没有就系统自己判断
     try:
         numerical_vars = var_dict.loc[(var_dict['数据类型'] != 'varchar') & ~pd.isnull(var_dict['指标英文']), '指标英文'].tolist()
         categorical_vars = var_dict.loc[(var_dict['数据类型'] == 'varchar') & ~pd.isnull(var_dict['指标英文']), '指标英文'].tolist()
         numerical_vars = list(set(numerical_vars).intersection(set(X.columns)))
         categorical_vars = list(set(categorical_vars).intersection(set(X.columns)))
     except:
-        numerical_vars = X.dtypes[X.dtypes!='object'].index.values
-        categorical_vars = X.dtypes[X.dtypes=='object'].index.values
+        numerical_vars = X.select_dtypes(exclude=['object']).columns
+        categorical_vars = X.select_dtypes('O').columns
 
+    # the following can only be done for continuous variable
     if len(numerical_vars) > 0:
-        X_numerical = X[numerical_vars].apply(lambda x: x.astype(float), 0)\
-                                       .replace(-8888, np.nan)\
-                                       .replace(-9999, np.nan)\
-                                       .replace(-8887, np.nan) \
-                                       .replace(-1, np.nan)
+        X_numerical = X[numerical_vars].apply(lambda x: x.astype(float), 0).replace(special_value, [np.nan]* len(special_value))
+
         numerical_vars_summary = X_numerical.mean().round(6).to_frame('mean')
         numerical_vars_summary.loc[:, 'std'] = X_numerical.std().round(6)
         numerical_vars_summary.loc[:, 'median'] = X_numerical.median().round(6)
@@ -82,17 +61,11 @@ def eda(X, var_dict, useless_vars, exempt_vars, uniqvalue_cutoff=0.97):
         numerical_vars_summary.loc[:, 'p90'] = X_numerical.quantile(q=0.90)
         numerical_vars_summary.loc[:, 'p95'] = X_numerical.quantile(q=0.95)
         numerical_vars_summary.loc[:, 'p99'] = X_numerical.quantile(q=0.99)
+
     # the following are for categorical_vars
     if len(categorical_vars) > 0:
         X_categorical = X[categorical_vars].copy()
-        X_categorical = X_categorical.replace('-8888.0', np.nan)\
-                                     .replace('-9999.0', np.nan)\
-                                     .replace('-8887.0', np.nan)\
-                                     .replace('-8888', np.nan)\
-                                     .replace('-9999', np.nan)\
-                                     .replace('-8887', np.nan) \
-                                     .replace('-1.0', np.nan)\
-                                     .replace('-1', np.nan)
+        X_categorical = X_categorical.replace(special_value, [np.nan]* len(special_value))
         categorical_vars_summary = X_categorical.nunique().to_frame('N_categories')
         cat_list = []
         for col in categorical_vars:
@@ -142,25 +115,12 @@ def eda(X, var_dict, useless_vars, exempt_vars, uniqvalue_cutoff=0.97):
         return None
 
     all_variable_summary.loc[:, 'exclusion_reason'] = None
-    all_variable_summary.loc[all_variable_summary.pct_NA > uniqvalue_cutoff, 'exclusion_reason'] = '缺失NA比例大于{}'.format(uniqvalue_cutoff)
-    all_variable_summary.loc[all_variable_summary.pct_0 > uniqvalue_cutoff, 'exclusion_reason'] = '0值比例大于{}'.format(uniqvalue_cutoff)
+    all_variable_summary.loc[all_variable_summary.pct_NA > cutoff, 'exclusion_reason'] = '缺失NA比例大于{}'.format(cutoff)
+    all_variable_summary.loc[all_variable_summary.pct_0 > cutoff, 'exclusion_reason'] = '0值比例大于{}'.format(cutoff)
     if len(categorical_vars) > 0:
         all_variable_summary.loc[all_variable_summary.N_categories == 1, 'exclusion_reason'] = '只有一个分类'
         all_variable_summary.loc[all_variable_summary.N_categories > 100, 'exclusion_reason'] = '类别变量的类别数过多'
     all_variable_summary.loc[useless_vars, 'exclusion_reason'] = '无用变量'
-    '''
-    vincio_vars = [i for i in all_variable_summary.index.values if isinstance(i, str) and 'vincio' in i]
-    vincio_duplicate = [i.replace('vincio_', '') for i in vincio_vars]
-    vincio_duplicate = list(set(vincio_duplicate).intersection(set(all_variable_summary.index.values)))
-    vincio_vars = vincio_vars + vincio_duplicate
-    all_variable_summary.loc[vincio_vars, 'exclusion_reason'] = 'vincio变量'
-
-    bairong_vars = [i for i in all_variable_summary.index.values if isinstance(i, str) and 'al_m6' in i]
-    all_variable_summary.loc[bairong_vars, 'exclusion_reason'] = 'bairong变量'
-    '''
-    # change exempt_vars exclusion_reason to None
-    all_variable_summary.loc[exempt_vars, 'exclusion_reason'] = None
-
 
     # check
     # all_variable_summary.exclusion_reason.value_counts()
@@ -190,12 +150,12 @@ def eda(X, var_dict, useless_vars, exempt_vars, uniqvalue_cutoff=0.97):
     reorder_cols = cols[:5] + [cols[-1]] + [cols[5]] + [cols[14]] + cols[6:14] +  cols[15:-1]
     if len(set(reorder_cols).intersection(set(final_output.columns))) != len(set(final_output.columns)):
         return final_output.columns
-    # reorder_cols = reduce(lambda x, y: x.append(y), order_list)
-
     final_output = final_output[reorder_cols]
-    #final_output.to_excel(os.path.join(data_path, '%s_variables_summary.xlsx' % save_label), \
-    #                    encoding='utf-8', index=False)
+    final_output.to_excel(os.path.join(result_path, '%s_EDA.xlsx' % save_label),encoding='utf-8', index=False)
     return final_output
+
+
+
 
 def get_badRate_and_dist_by_time(cat_data_with_y_and_time,select_vars,time_var_name,y_name):
     '''

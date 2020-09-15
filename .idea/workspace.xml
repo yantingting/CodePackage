@@ -5,6 +5,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils3/data_io_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils3/data_io_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils3/model_training.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils3/model_training.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils3/summary_statistics.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils3/summary_statistics.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -13,25 +14,25 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="CodePackage" />
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="380">
-              <caret line="20" selection-start-line="20" selection-end-line="20" />
+            <state relative-caret-position="152">
+              <caret line="8" column="18" lean-forward="true" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="18" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/utils3/data_io_utils.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/opt/anaconda3/envs/modeling/lib/python3.6/site-packages/pandas/core/frame.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="697">
-              <caret line="163" column="37" selection-start-line="163" selection-start-column="37" selection-end-line="163" selection-end-column="37" />
-              <folding>
-                <element signature="e#185#194#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="60667">
+              <caret line="3301" column="8" selection-start-line="3301" selection-start-column="8" selection-end-line="3301" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -64,8 +65,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/utils3/feature_selection.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="380">
-              <caret line="28" column="23" selection-start-line="28" selection-start-column="23" selection-end-line="28" selection-end-column="23" />
+            <state relative-caret-position="1162">
+              <caret line="713" selection-start-line="713" selection-end-line="713" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/utils3/summary_statistics.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="496">
+              <caret line="156" lean-forward="true" selection-start-line="15" selection-end-line="156" />
             </state>
           </provider>
         </entry>
@@ -83,6 +93,9 @@
     <findStrings>
       <find>set_option</find>
       <find>display</find>
+      <find>varch</find>
+      <find>exempt_vars</find>
+      <find>cutoff</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -93,15 +106,14 @@
       <list>
         <option value="$PROJECT_DIR$/Todo List.txt" />
         <option value="$PROJECT_DIR$/LR/common_fun.py" />
-        <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/utils3/data_io_utils.py" />
         <option value="$PROJECT_DIR$/utils3/summary_statistics.py" />
+        <option value="$PROJECT_DIR$/test.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="x" value="-93" />
-    <option name="y" value="-1080" />
+    <option name="x" value="-1920" />
     <option name="width" value="1920" />
     <option name="height" value="1080" />
   </component>
@@ -169,6 +181,10 @@
       <method v="2" />
     </configuration>
   </component>
+  <component name="StructureViewFactory">
+    <option name="AUTOSCROLL_MODE" value="false" />
+    <option name="ACTIVE_ACTIONS" value=",SHOW_INHERITED,SHOW_FIELDS" />
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -183,12 +199,13 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-93" y="-1080" width="1920" height="1080" extended-state="0" />
+    <frame x="-1920" y="0" width="1920" height="1080" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18690096" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info id="DB Browser" order="3" weight="0.32967034" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4973822" visible="true" weight="0.17039403" />
+      <window_info id="Structure" order="1" sideWeight="0.5026178" side_tool="true" visible="true" weight="0.17039403" />
+      <window_info id="Favorites" order="2" sideWeight="0.5026178" side_tool="true" weight="0.17039403" />
+      <window_info id="DB Browser" order="3" weight="0.13919415" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.32970297" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -199,12 +216,12 @@
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="DB Execution Console" order="8" />
       <window_info anchor="bottom" id="Terminal" order="9" />
-      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="11" weight="0.32970297" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" weight="0.32970297" />
+      <window_info anchor="bottom" id="Python Console" order="11" visible="true" weight="0.43267328" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Mongo Explorer" order="3" />
+      <window_info anchor="right" id="Mongo Explorer" order="3" weight="0.32960597" />
     </layout>
   </component>
   <component name="VcsManagerConfiguration">
@@ -248,13 +265,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/utils3/mysql.cfg" />
-    <entry file="file://$PROJECT_DIR$/utils3/summary_statistics.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="393">
-          <caret line="216" column="42" selection-start-line="216" selection-start-column="39" selection-end-line="216" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/utils3/xgboost_model.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="65">
@@ -271,10 +281,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test.py">
+    <entry file="file://$PROJECT_DIR$/utils3/summary_statistics1.py" />
+    <entry file="file://$PROJECT_DIR$/utils3/data_io_utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="20" selection-start-line="20" selection-end-line="20" />
+        <state relative-caret-position="506">
+          <caret line="105" column="87" selection-start-line="105" selection-start-column="40" selection-end-line="105" selection-end-column="87" />
+          <folding>
+            <element signature="e#185#194#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/opt/anaconda3/envs/modeling/lib/python3.6/site-packages/pandas/core/frame.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60667">
+          <caret line="3301" column="8" selection-start-line="3301" selection-start-column="8" selection-end-line="3301" selection-end-column="8" />
         </state>
       </provider>
     </entry>
@@ -299,18 +320,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/utils3/feature_selection.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="28" column="23" selection-start-line="28" selection-start-column="23" selection-end-line="28" selection-end-column="23" />
+        <state relative-caret-position="1162">
+          <caret line="713" selection-start-line="713" selection-end-line="713" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils3/data_io_utils.py">
+    <entry file="file://$PROJECT_DIR$/utils3/summary_statistics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="697">
-          <caret line="163" column="37" selection-start-line="163" selection-start-column="37" selection-end-line="163" selection-end-column="37" />
-          <folding>
-            <element signature="e#185#194#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="496">
+          <caret line="156" lean-forward="true" selection-start-line="15" selection-end-line="156" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="8" column="18" lean-forward="true" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="18" />
         </state>
       </provider>
     </entry>
