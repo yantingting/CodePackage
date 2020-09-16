@@ -27,7 +27,7 @@ df = pd.read_excel(os.path.join(data_path, 'sample_data.xlsx'))
 df.head()
 
 # step 1:生成数据字典，方便后期管理建模可用的变量
-my_dict = DataCombine().create_dict(df , is_available = 'Y', data_sorce='TYC', data_type='三方', useless_vars = ['company_name_md5'])
+my_dict = DataSummary().create_dict(df , is_available = 'Y', data_sorce='TYC', data_type='三方', useless_vars = ['company_name_md5'])
 my_dict
 
 # step 2:数据EDA，初步分析数据的分布
