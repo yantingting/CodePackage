@@ -40,3 +40,4 @@ my_eda= eda(df, useless_vars = ['company_name_md5'], special_value = [np.nan, 0]
 
 
 
+
