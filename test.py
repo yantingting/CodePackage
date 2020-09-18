@@ -32,71 +32,17 @@ my_dict = DataSummary().create_dict(df , is_available = 'Y', data_sorce='TYC', d
 my_dict
 
 # step 2:数据EDA，初步分析数据的分布
-my_eda= eda(df, useless_vars = ['company_name_md5'], special_value = [np.nan, 0], var_dict = my_dict, result_path = result_path, save_label = 'test', cutoff=0.9)
+my_eda= DataSummary().eda(df, useless_vars = ['company_name_md5'], special_value = [np.nan, 0], var_dict = my_dict, result_path = result_path, save_label = 'test', cutoff=0.9)
 
 # step3: 拆分数据集，随机分，分层随机分，按时间分
+df_all = DataSummary().split_df(df= df, test_size=0.3, random_state=2, shuffle = True, stratify = 'flag' )
+
+df_train = df_all['train']
+print(df_train.head())
+df_test = df_all['test']
+print(df_test.head())
+
+# step4:数据分箱并计算IV，KS等值（开始分箱的类）
 
 
 
-
-# my_dict = {'b':'c','a':'b',  'c':'d', 'd':'e', 's':'t', 't':'m'}
-
-
-temp = pd.read_excel(r'/Users/yantingting/Desktop/text.xlsx')
-temp = temp[~temp['property2'].isna()]
-temp['property2'] = temp['property2'].astype(str)
-temp['id'] = temp['id'].astype(str)
-my_dict = dict(zip(temp['id'], temp['property2']))
-my_dict
-def convert_dict(my_dict):
-    all_keys = my_dict.keys()
-    all_keys_1 = [value for value in all_keys]
-    all_values = my_dict.values()
-    all_values_1 = [value for value in all_values]
-    my_dict_1 = {}
-    mylist_temp = []
-    for k,v in my_dict.items():
-        if k in all_values_1:
-            continue
-        else:
-            temp1 = v
-            while v in all_keys_1:
-                temp1 = ','.join([temp1, my_dict.get(v)])
-                v = my_dict.get(v)
-            my_dict_1[k] = temp1
-
-
-    return my_dict_1, mylist_temp
-
-
-dict1, mylist_temp = convert_dict(my_dict)
-# print(mylist_temp)
-# dict1
-# pd.DataFrame([dict1]).T
-
-df = pd.DataFrame.from_dict(dict1, orient='index', columns = ['his_name_list'])
-df = df.reset_index().rename(columns = {'index':'name'})
-
-
-
-
-
-
-def search_used_name(root, used_name, lines):
-    child_counter = 0
-    for line in lines:
-        if root == line[1]:
-            child_counter += 1
-            used_name.append(line[0])
-            used_name = search_used_name(line[0], used_name, lines)
-
-            if child_counter == 0:
-                return used_name
-
-    return used_name
-
-lines = my_dict
-for line in lines:
-    if not line[1]:
-        used_name = search_used_name(line[0], [], lines)
-        print(line[0],used_name)

@@ -9,34 +9,65 @@
 @Software: PyCharm
 """
 
+import pandas as pd
 
-from openpyxl import load_workbook
+# my_dict = {'b':'c','a':'b',  'c':'d', 'd':'e', 's':'t', 't':'m'}
+
+temp = pd.read_excel(r'/Users/yantingting/Desktop/text.xlsx')
+temp = temp[~temp['property2'].isna()]
+temp['property2'] = temp['property2'].astype(str)
+temp['id'] = temp['id'].astype(str)
+my_dict = dict(zip(temp['id'], temp['property2']))
+my_dict
+def convert_dict(my_dict):
+    all_keys = my_dict.keys()
+    all_keys_1 = [value for value in all_keys]
+    all_values = my_dict.values()
+    all_values_1 = [value for value in all_values]
+    my_dict_1 = {}
+    mylist_temp = []
+    for k,v in my_dict.items():
+        if k in all_values_1:
+            continue
+        else:
+            temp1 = v
+            while v in all_keys_1:
+                temp1 = ','.join([temp1, my_dict.get(v)])
+                v = my_dict.get(v)
+            my_dict_1[k] = temp1
+
+
+    return my_dict_1, mylist_temp
+
+
+dict1, mylist_temp = convert_dict(my_dict)
+# print(mylist_temp)
+# dict1
+# pd.DataFrame([dict1]).T
+
+df = pd.DataFrame.from_dict(dict1, orient='index', columns = ['his_name_list'])
+df = df.reset_index().rename(columns = {'index':'name'})
+
+
+
+
 
 
 def search_used_name(root, used_name, lines):
     child_counter = 0
     for line in lines:
-        if line[35].value == root:  # 如果property2 和 root相同，表示这行记录对应的id为 root的曾用id
+        if root == line[1]:
             child_counter += 1
-            used_name.append(line[4].value)
-            used_name = search_used_name(line[4].value, used_name, lines)
-    if child_counter == 0:
-        return used_name
+            used_name.append(line[0])
+            used_name = search_used_name(line[0], used_name, lines)
+
+            if child_counter == 0:
+                return used_name
+
     return used_name
 
-
-wb = load_workbook(r'/Users/yantingting/Desktop/text.xlsx')
-ws = wb['Sheet1']
-
-for line in ws.rows:
-    # id
-    row_child = line[4].value
-    # property2
-    row_parent = line[35].value
-    if not row_parent:  # 如果property2是空，表示当前id为最新id
-        used_name = search_used_name(row_child, [], ws.rows)  #递归搜索当前id的曾用名，返回当前id的所有曾用id
-        if used_name:  # 如果当前id有曾用id，则打印
-            print(row_child, used_name)
-
-
-
+lines = my_dict
+for line in lines:
+    if not line[1]:
+        used_name = search_used_name(line[0], [], lines)
+        print(line[0],used_name)

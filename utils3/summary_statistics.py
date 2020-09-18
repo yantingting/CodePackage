@@ -132,6 +132,9 @@ def eda(X, useless_vars = [], special_value = [], var_dict = None, result_path =
 
 
 
+
+
+
 def get_badRate_and_dist_by_time(cat_data_with_y_and_time,select_vars,time_var_name,y_name):
     '''
     该函数为统计变量按统计时间每个分箱的逾期率以及分布

@@ -20,6 +20,10 @@ import itertools
 from sqlalchemy import create_engine
 import time
 
+__all__ = ['print_run_time',
+           'DataBase',
+           'DataSummary'
+           ]
 
 def print_run_time(func):
     def wrapper(*args, **kw):
@@ -39,6 +43,7 @@ class DataBase():
             "host": "1.2.20",
             "port": "4"
         }
+
     @print_run_time
     def get_df_from_pg(self, SQL):
         try:
@@ -112,6 +117,42 @@ class DataSummary():
         var_dict['指标类型'] = data_type
         var_dict['是否可用'] = is_available
         return var_dict
+
+
+    @print_run_time
+    def split_df(self, df, test_size=0.3, random_state=2, shuffle=True, stratify='flag'):
+        '''
+        :param df:数据集 DataFrame
+        :param test_size: 测试集占比，默认30%
+        :param random_state: 是否每次结果一致
+        :param shuffle:
+        :param stratify: 按某个字段分层抽样
+        :return: df_all, 一个dict {'train': df_train, 'test': df_test}
+        '''
+        import sklearn
+        from sklearn.model_selection import train_test_split
+        from collections import OrderedDict
+
+        df_train, df_test = train_test_split(df, test_size=test_size, random_state=random_state, shuffle=shuffle,
+                                             stratify=df[stratify])
+
+        df_all = OrderedDict()
+        df_all['train'] = df_train
+        df_all['test'] = df_test
+
+        df_dict = {'df_all': df, 'df_train': df_train, 'df_test': df_test}
+        for keys, values in df_dict.items():
+            df_info = values
+            print('\n***************** % s *****************' % keys)
+            print('数据集行列：{}\n逾期率：{}\n{}样本占整体样本的比例：{}'.\
+                  format(df_info.shape,
+                         '%.2f%%' % (df_info[stratify].sum() / df_info.shape[0] * 100),
+                         keys,
+                         '%.2f%%' % (df_info.shape[0] / df.shape[0] * 100))
+                        )
+
+        return df_all
+
 
     @print_run_time
     def eda(self, X, useless_vars=[], special_value=[], var_dict=None, result_path=None, save_label=None, cutoff=0.97):
@@ -233,13 +274,15 @@ class DataSummary():
         return final_output
 
 
-
+    @print_run_time
     def load_data_from_pickle(selef, file_path, file_name):
         file_path_name = os.path.join(file_path, file_name)
         with open(file_path_name, 'rb') as infile:
             result = pickle.load(infile)
         return result
 
+
+    @print_run_time
     def save_data_to_pickle(self, obj, file_path, file_name):
         file_path_name = os.path.join(file_path, file_name)
         with open(file_path_name, 'wb') as outfile:
