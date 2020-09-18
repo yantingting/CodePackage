@@ -12,7 +12,6 @@
 import sys
 sys.path.append('/Users/yantingting/Documents/Code/CodePackage/')
 from utils3.summary_statistics import *
-from utils3.data_io_utils import *
 import pandas as pd
 pd.set_option('display.max_columns', None)
 import os
@@ -42,7 +41,9 @@ print(df_train.head())
 df_test = df_all['test']
 print(df_test.head())
 
+
 # step4:数据分箱并计算IV，KS等值（开始分箱的类）
+
 
 
 
