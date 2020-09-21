@@ -9,6 +9,23 @@
 @Software: PyCharm
 """
 
+import sys
+line1 = input()
+line2 = sys.stdin.readline()
+
+print(len(line1),len(line2))
+print(line1, line2)
+[i for i in line2]
+[i for i in line1]
+
+for line in  sys.stdin:
+    i = line.split('\t')
+    print(i)
+
+
+
+
+
 import pandas as pd
 
 # my_dict = {'b':'c','a':'b',  'c':'d', 'd':'e', 's':'t', 't':'m'}
