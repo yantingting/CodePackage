@@ -934,7 +934,7 @@ class Performance(object):
         #处理某些分箱无数据造成psi inf
         psi_index_value = (np.log(combined.after_pct/combined.before_pct) * (combined.after_pct - combined.before_pct))
         psi_index_value = psi_index_value.replace(np.inf, 0)
-        combined.loc[:, 'PSI'] = psi_index_value.sum()
+        combined.loc[:, 'PSI'] = np.nansum(psi_index_value)
         combined = combined.reset_index().rename(columns={'index': '分箱'})
         # 添加排序列并排序
         combined = BinWoe().order_bin_output(combined, '分箱')
@@ -1167,13 +1167,9 @@ class Performance(object):
         from sklearn.metrics import roc_auc_score
         y = df.label.values
         y_pred = df.y_pred
-        ## AUC
         auc = roc_auc_score(y, y_pred)
-        #print("auc: %.2f" % auc)
-        ## Accuracy
         predictions = [round(value) for value in y_pred]
         accuracy = accuracy_score(y, predictions)
-        #print("Accuracy: %.4f%%" % (accuracy * 100.0))
 
         return auc, accuracy
 

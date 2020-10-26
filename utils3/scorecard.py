@@ -14,7 +14,7 @@ import pandas as pd
 import numpy as np
 import re
 from .condition_fun import *
-from .woebin import woepoints_ply1
+from .data_bins import woepoints_ply1
 
 
 # coefficients in scorecard
@@ -48,8 +48,14 @@ def ab(points0=600, odds0=1 /19, pdo=50):
     return {'a': a, 'b': b}
 
 
+def get_scorecard(card):
+    df_v = pd.DataFrame()
+    for col in card.keys():
+        df_v = df_v.append(card[col], ignore_index=True)
+    return df_v
 
-def scorecard(bins, model, xcolumns, points0=600, odds0=1 / 19, pdo=50, basepoints_eq0=False):
+
+def scorecard(bins, model, xcolumns, points0=600, odds0=1/19, pdo=50, basepoints_eq0=False):
     '''
     Creating a Scorecard
     ------
@@ -121,8 +127,7 @@ def scorecard(bins, model, xcolumns, points0=600, odds0=1 / 19, pdo=50, basepoin
         bins = pd.concat(bins, ignore_index=True)
     xs = [re.sub('_woe$', '', i) for i in xcolumns]
     # coefficients
-    coef_df = pd.Series(model.coef_[0], index=np.array(xs)) \
-        .loc[lambda x: x != 0]  # .reset_index(drop=True)
+    coef_df = pd.Series(model.coef_[0], index=np.array(xs)).loc[lambda x: x != 0]  # .reset_index(drop=True)
 
     # scorecard
     len_x = len(coef_df)
@@ -141,7 +146,9 @@ def scorecard(bins, model, xcolumns, points0=600, odds0=1 / 19, pdo=50, basepoin
             card[i] = bins.loc[bins['variable'] == i, ['variable', 'bin', 'woe']] \
                 .assign(points=lambda x: round(-b * x['woe'] * coef_df[i])) \
                 [["variable", "bin", "points"]]
-    return card
+
+    score_card = get_scorecard(card)
+    return score_card
 
 
 def scorecard_ply(dt, card, only_total_score=True, print_step=0, replace_blank_na=True, var_kp=None):

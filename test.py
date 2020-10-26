@@ -16,9 +16,14 @@ sys.path.append('/Users/yantingting/Documents/Code/CodePackage/')
 from utils3.summary_statistics import *
 from utils3.data_bins import *
 from utils3.common_fun import *
+from utils3.stepregression import *
+from utils3.scorecard import *
+import utils3.metrics as mt
 import pandas as pd
 pd.set_option('display.max_columns', None)
 import os
+
+pf =mt.Performance()
 
 
 data_path = '/Users/yantingting/Documents/Code/'
@@ -37,10 +42,6 @@ my_dict.to_csv(os.path.join(result_path, 'my_dict.csv'), index = False)
 
 # step 2:数据EDA，初步分析数据的分布
 my_eda= DataSummary().eda(df, useless_vars = [], special_value = [np.nan, 0], var_dict = my_dict, result_path = result_path, save_label = 'test', cutoff=0.9)
-
-
-
-
 
 y_header = 'flag'
 # step3: 拆分数据集，随机分，分层随机分，按时间分
@@ -68,6 +69,8 @@ df_bins.to_csv(os.path.join(result_path, 'df_bins.csv'), index = False)
 
 df_iv = get_ivlist_from_bins(bins)
 
+df_psi = pf.variable_psi(x_train , x_test, var_dict)
+
 
 # step5:变量筛选（低IV，高PSI，不单调）
 
@@ -88,10 +91,68 @@ x_train.head()
 
 # step7: 回归筛变量 适用于逻辑回归模型
 
+remain_feature = stepregression(x_train, y_train, method='both', threshold_in=0.02, threshold_out=0.05, verbose=True)
+
+
+
+# 训练模型（逻辑回归和机器学习需要不同的流程）
+# 逻辑回归：
+
+# statsmodels训练模型
+import statsmodels.api as sm
+
+sts = sm.Logit(y_train, sm.add_constant(x_train[remain_feature]))
+rst = sts.fit()
+rst.params
+print(rst.summary2())  # 输出模型参数检验
+
+train_pred = rst.predict(sm.add_constant(x_train[remain_feature]))
+test_pred = rst.predict(sm.add_constant(x_test[remain_feature]))
+train_perf = sc.perf_eva(y_train, train_pred, plot_type=["ks", "roc"], title="train")
+test_perf = sc.perf_eva(y_test, test_pred, plot_type=["ks", "roc"], title="test")
+
+perfs = pd.DataFrame({'KS': pd.Series([train_perf['KS'], test_perf['KS']]),
+                      'AUC': pd.Series([train_perf['AUC'], test_perf['AUC']]),
+                      'Gini': pd.Series([train_perf['Gini'], test_perf['Gini']])})
+perfs.index = ['train', 'test']
+perfs
+
+
+# sklearn 训练模型
+from sklearn.linear_model import LogisticRegression
+lr = LogisticRegression(penalty='l1', C=0.9, solver='saga', n_jobs=-1)
+lr.fit(x_train[remain_feature], y_train)
+
+train_pred = lr.predict_proba(x_train[remain_feature])[:,1]
+test_pred = lr.predict_proba(x_test[remain_feature])[:,1]
+print(train_pred)
+print(test_pred)
+
+train_perf = sc.perf_eva(y_train, train_pred, title = "train")
+test_perf = sc.perf_eva(y_test, test_pred, title = "test")
+train_perf
+test_perf
+
+
+
+
+
+# 生成并存储评分卡
+df_card = scorecard(bins, lr, remain_feature, points0=600, odds0=1/8, pdo=50)
+df_card.to_csv(os.path.join(result_path, 'score_card'+'_v1'))
+
+
+
+
+
 
 # 输出所有结果  尽量能放在同一个Excel里
 
 # 之前的结果比较好，把所有变量的各个指标统计在一起
 
-
-
+import sys
+sys.argv
+sys.argv[0]
+sys.argv[1]
+sys.argv[2]
+sys.argv[3]
